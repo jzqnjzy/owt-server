@@ -9,6 +9,7 @@
 #include "MediaDefinitions.h"
 #include "VideoFramePacketizerWrapper.h"
 #include "SipCallConnection.h"
+#include "WebRTCTaskRunnerPool.h"
 
 using namespace v8;
 
