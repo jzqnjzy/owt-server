@@ -11,6 +11,7 @@
       'ThreadPool.cc',
       'IOThreadPool.cc',
       "MediaStream.cc",
+      "WebRTCTaskRunnerPool.cc",
       'conn_handler/WoogeenHandler.cpp',
       'erizo/src/erizo/DtlsTransport.cpp',
       'erizo/src/erizo/IceConnection.cpp',
@@ -47,7 +48,8 @@
       '../../../core/owt_base/VideoFramePacketizer.cpp',
       '../../../core/owt_base/SsrcGenerator.cc',
       '../../../core/rtc_adapter/VieReceiver.cc',
-      '../../../core/rtc_adapter/VieRemb.cc' #20150508
+      '../../../core/rtc_adapter/VieRemb.cc', #20150508
+      '../../../core/owt_base/WebRTCTaskRunnerPool.cpp'
     ],
     'cflags_cc': ['-DWEBRTC_POSIX', '-DWEBRTC_LINUX', '-DLINUX', '-DNOLINUXIF', '-DNO_REG_RPC=1', '-DHAVE_VFPRINTF=1', '-DRETSIGTYPE=void', '-DNEW_STDIO', '-DHAVE_STRDUP=1', '-DHAVE_STRLCPY=1', '-DHAVE_LIBM=1', '-DHAVE_SYS_TIME_H=1', '-DTIME_WITH_SYS_TIME_H=1'],
     'include_dirs': [

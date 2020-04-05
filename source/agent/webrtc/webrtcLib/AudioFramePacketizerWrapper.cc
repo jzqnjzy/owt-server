@@ -11,6 +11,7 @@
 #include "WebRtcConnection.h"
 #include "MediaStream.h"
 #include <WebRtcConnection.h>
+#include "WebRTCTaskRunnerPool.h"
 
 using namespace v8;
 
@@ -37,11 +38,18 @@ void AudioFramePacketizer::Init(v8::Local<v8::Object> exports) {
 }
 
 void AudioFramePacketizer::New(const FunctionCallbackInfo<Value>& args) {
+  if (args.Length() < 1) {
+    Nan::ThrowError("Wrong number of arguments");
+  }
+
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
+  WebRTCTaskRunnerPool* taskRunnerPool = Nan::ObjectWrap::Unwrap<WebRTCTaskRunnerPool>(Nan::To<v8::Object>(args[0]).ToLocalChecked());
+  std::shared_ptr<owt_base::WebRTCTaskRunner> webRTCTaskRunner = taskRunnerPool->me->getLessUsedTaskRunner();
+
   AudioFramePacketizer* obj = new AudioFramePacketizer();
-  obj->me = new owt_base::AudioFramePacketizer();
+  obj->me = new owt_base::AudioFramePacketizer(webRTCTaskRunner);
   obj->dest = obj->me;
 
   obj->Wrap(args.This());

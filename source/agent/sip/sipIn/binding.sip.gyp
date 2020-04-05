@@ -9,6 +9,7 @@
       'AudioFramePacketizerWrapper.cc',
       'VideoFrameConstructorWrapper.cc',
       'VideoFramePacketizerWrapper.cc',
+      "WebRTCTaskRunnerPool.cc",
       '../../addons/common/NodeEventRegistry.cc',
       '../../../core/owt_base/AudioFrameConstructor.cpp',
       '../../../core/owt_base/AudioFramePacketizer.cpp',
@@ -18,7 +19,8 @@
       '../../../core/owt_base/VideoFramePacketizer.cpp',
       '../../../core/owt_base/SsrcGenerator.cc',
       '../../../core/rtc_adapter/VieReceiver.cc',
-      '../../../core/rtc_adapter/VieRemb.cc' #20150508
+      '../../../core/rtc_adapter/VieRemb.cc', #20150508
+      '../../../core/owt_base/WebRTCTaskRunnerPool.cpp'
     ],
     'dependencies': ['sipLib'],
     'cflags_cc': ['-DWEBRTC_POSIX', '-DWEBRTC_LINUX'],

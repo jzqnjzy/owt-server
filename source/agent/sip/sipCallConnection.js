@@ -21,6 +21,7 @@ exports.SipCallConnection = function (spec, onMediaUpdate) {
         video = spec.video,
         support_red = spec.red,
         support_ulpfec = spec.ulpfec,
+        webrtcTaskRunnerPool = spec.webrtcTaskRunnerPool,
         audioFrameConstructor,
         audioFramePacketizer,
         videoFrameConstructor,
@@ -34,7 +35,7 @@ exports.SipCallConnection = function (spec, onMediaUpdate) {
         audioFrameConstructor.bindTransport(sip_callConnection);
 
         // mcu->sip
-        audioFramePacketizer = new AudioFramePacketizer();
+        audioFramePacketizer = new AudioFramePacketizer(webrtcTaskRunnerPool);
         audioFramePacketizer.bindTransport(sip_callConnection);
     }
     if (video) {
@@ -44,7 +45,7 @@ exports.SipCallConnection = function (spec, onMediaUpdate) {
             onMediaUpdate(peerURI, 'in', mediaUpdate);
         });
 
-        videoFramePacketizer = new VideoFramePacketizer(support_red, support_ulpfec);
+        videoFramePacketizer = new VideoFramePacketizer(support_red, support_ulpfec, webrtcTaskRunnerPool);
         videoFramePacketizer.bindTransport(sip_callConnection);
     }
 

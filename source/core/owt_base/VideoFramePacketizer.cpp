@@ -5,6 +5,7 @@
 #include "VideoFramePacketizer.h"
 #include "MediaUtilities.h"
 #include <rtputils.h>
+#include "WebRTCTaskRunnerPool.h"
 
 namespace owt_base {
 
@@ -17,6 +18,7 @@ DEFINE_LOGGER(VideoFramePacketizer, "owt.VideoFramePacketizer");
 VideoFramePacketizer::VideoFramePacketizer(
     bool enableRed,
     bool enableUlpfec,
+	std::shared_ptr<WebRTCTaskRunner> taskRunner,
     bool enableTransportcc,
     bool selfRequestKeyframe,
     uint32_t transportccExtId)
@@ -33,20 +35,21 @@ VideoFramePacketizer::VideoFramePacketizer(
     , m_sendFrameCount(0)
     , m_clock(nullptr)
     , m_timeStampOffset(0)
+    , m_taskRunner(taskRunner)
 {
     video_sink_ = nullptr;
     m_ssrc = m_ssrc_generator->CreateSsrc();
     m_ssrc_generator->RegisterSsrc(m_ssrc);
     m_videoTransport.reset(new WebRTCTransport<erizoExtra::VIDEO>(this, nullptr));
-    m_taskRunner.reset(new owt_base::WebRTCTaskRunner("VideoFramePacketizer"));
-    m_taskRunner->Start();
+    // m_taskRunner.reset(new owt_base::WebRTCTaskRunner("VideoFramePacketizer"));
+    // m_taskRunner->Start();
     init(enableRed, enableUlpfec, enableTransportcc, transportccExtId);
 }
 
 VideoFramePacketizer::~VideoFramePacketizer()
 {
     close();
-    m_taskRunner->Stop();
+    // m_taskRunner->Stop();
     m_ssrc_generator->ReturnSsrc(m_ssrc);
     SsrcGenerator::ReturnSsrcGenerator();
     boost::unique_lock<boost::shared_mutex> lock(m_rtpRtcpMutex);

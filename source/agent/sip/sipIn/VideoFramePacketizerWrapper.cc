@@ -33,13 +33,21 @@ void VideoFramePacketizer::Init(v8::Local<v8::Object> exports) {
 }
 
 void VideoFramePacketizer::New(const FunctionCallbackInfo<Value>& args) {
+  if (args.Length() < 3) {
+    Nan::ThrowError("Wrong number of arguments");
+  }
+
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   bool supportRED = (args[0]->ToBoolean())->BooleanValue();
   bool supportULPFEC = (args[1]->ToBoolean())->BooleanValue();
+
+  WebRTCTaskRunnerPool* taskRunnerPool = Nan::ObjectWrap::Unwrap<WebRTCTaskRunnerPool>(Nan::To<v8::Object>(args[2]).ToLocalChecked());
+  std::shared_ptr<owt_base::WebRTCTaskRunner> webRTCTaskRunner = taskRunnerPool->me->getLessUsedTaskRunner();
+
   VideoFramePacketizer* obj = new VideoFramePacketizer();
-  obj->me = new owt_base::VideoFramePacketizer(supportRED, supportULPFEC, false, true);
+  obj->me = new owt_base::VideoFramePacketizer(supportRED, supportULPFEC, webRTCTaskRunner, false, true);
   obj->dest = obj->me;
 
   obj->Wrap(args.This());

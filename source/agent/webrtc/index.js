@@ -21,6 +21,9 @@ threadPool.start();
 // We don't use Nicer connection now
 var ioThreadPool = new addon.IOThreadPool(global.config.webrtc.io_workers || 1);
 
+var webrtcTaskRunnerPool = new addon.WebRTCTaskRunnerPool(1);
+webrtcTaskRunnerPool.start();
+
 if (global.config.webrtc.use_nicer) {
   log.info('Starting ioThreadPool');
   ioThreadPool.start();
@@ -79,6 +82,7 @@ module.exports = function (rpcClient, selfRpcId, parentRpcId, clusterWorkerIP) {
             connectionId: connectionId,
             threadPool: threadPool,
             ioThreadPool: ioThreadPool,
+            webrtcTaskRunnerPool: webrtcTaskRunnerPool,
             direction: direction,
             media: options.media,
             formatPreference: options.formatPreference,

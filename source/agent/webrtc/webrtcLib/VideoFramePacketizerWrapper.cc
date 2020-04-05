@@ -11,6 +11,7 @@
 #include <MediaStream.h>
 #include "WebRtcConnection.h"
 #include "MediaStream.h"
+#include "WebRTCTaskRunnerPool.h"
 
 using namespace v8;
 
@@ -37,17 +38,24 @@ void VideoFramePacketizer::Init(v8::Local<v8::Object> exports) {
 }
 
 void VideoFramePacketizer::New(const FunctionCallbackInfo<Value>& args) {
+  if (args.Length() < 4) {
+    Nan::ThrowError("Wrong number of arguments");
+  }
+
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   bool supportRED = (args[0]->ToBoolean())->BooleanValue();
   bool supportULPFEC = (args[1]->ToBoolean())->BooleanValue();
+  WebRTCTaskRunnerPool* taskRunnerPool = Nan::ObjectWrap::Unwrap<WebRTCTaskRunnerPool>(Nan::To<v8::Object>(args[2]).ToLocalChecked());
+  std::shared_ptr<owt_base::WebRTCTaskRunner> webRTCTaskRunner = taskRunnerPool->me->getLessUsedTaskRunner();
+
   VideoFramePacketizer* obj = new VideoFramePacketizer();
-  int transportccExt = (args.Length() == 3) ? args[2]->IntegerValue() : -1;
+  int transportccExt = (args.Length() > 3) ? args[3]->IntegerValue() : -1;
   if (transportccExt > 0) {
-    obj->me = new owt_base::VideoFramePacketizer(supportRED, supportULPFEC, true, false, transportccExt);
+    obj->me = new owt_base::VideoFramePacketizer(supportRED, supportULPFEC, webRTCTaskRunner, true, false, transportccExt);
   } else {
-    obj->me = new owt_base::VideoFramePacketizer(supportRED, supportULPFEC);
+    obj->me = new owt_base::VideoFramePacketizer(supportRED, supportULPFEC, webRTCTaskRunner);
   }
   obj->dest = obj->me;
 

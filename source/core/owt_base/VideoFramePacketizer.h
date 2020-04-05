@@ -42,6 +42,7 @@ class VideoFramePacketizer : public FrameDestination,
 public:
     VideoFramePacketizer(bool enableRed,
                          bool enableUlpfec,
+						 std::shared_ptr<WebRTCTaskRunner> taskRunner,
                          bool enableTransportcc = true,
                          bool selfRequestKeyframe = false,
                          uint32_t transportccExt = 2);
@@ -92,7 +93,7 @@ private:
     boost::shared_mutex m_rtpRtcpMutex;
 
     boost::shared_ptr<webrtc::Transport> m_videoTransport;
-    boost::shared_ptr<WebRTCTaskRunner> m_taskRunner;
+    std::shared_ptr<WebRTCTaskRunner> m_taskRunner;
     FrameFormat m_frameFormat;
     uint16_t m_frameWidth;
     uint16_t m_frameHeight;

@@ -27,13 +27,17 @@ public:
 
     webrtc::ProcessThread* unwrap();
 
+    unsigned int GetModuleNum();
+
 private:
     std::unique_ptr<webrtc::ProcessThread> m_processThread;
+    int m_moduleNum;
 };
 
 inline WebRTCTaskRunner::WebRTCTaskRunner(const char* task_name)
     : m_processThread(webrtc::ProcessThread::Create(task_name))
 {
+    m_moduleNum = 0;
 }
 
 inline WebRTCTaskRunner::~WebRTCTaskRunner()
@@ -50,14 +54,21 @@ inline void WebRTCTaskRunner::Stop()
     m_processThread->Stop();
 }
 
+inline unsigned int WebRTCTaskRunner::GetModuleNum()
+{
+    return m_moduleNum;
+}
+
 inline void WebRTCTaskRunner::RegisterModule(webrtc::Module* module)
 {
     m_processThread->RegisterModule(module, RTC_FROM_HERE);
+    ++m_moduleNum;
 }
 
 inline void WebRTCTaskRunner::DeRegisterModule(webrtc::Module* module)
 {
     m_processThread->DeRegisterModule(module);
+    --m_moduleNum;
 }
 
 inline webrtc::ProcessThread* WebRTCTaskRunner::unwrap()

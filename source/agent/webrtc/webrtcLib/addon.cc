@@ -6,6 +6,7 @@
 #include "ThreadPool.h"
 #include "IOThreadPool.h"
 #include "MediaStream.h"
+#include "WebRTCTaskRunnerPool.h"
 
 #include <node.h>
 
@@ -20,6 +21,8 @@ void InitAll(Handle<Object> exports) {
   AudioFramePacketizer::Init(exports);
   VideoFrameConstructor::Init(exports);
   VideoFramePacketizer::Init(exports);
+  WebRTCTaskRunnerPool::Init(exports);
+
 }
 
 NODE_MODULE(addon, InitAll)

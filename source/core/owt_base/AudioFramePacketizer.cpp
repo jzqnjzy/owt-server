@@ -6,6 +6,8 @@
 #include "AudioUtilities.h"
 
 #include "WebRTCTaskRunner.h"
+#include "WebRTCTaskRunnerPool.h"
+
 
 using namespace webrtc;
 
@@ -13,27 +15,29 @@ namespace owt_base {
 
 DEFINE_LOGGER(AudioFramePacketizer, "owt.AudioFramePacketizer");
 
-AudioFramePacketizer::AudioFramePacketizer()
+AudioFramePacketizer::AudioFramePacketizer(std::shared_ptr<WebRTCTaskRunner> taskRunner)
     : m_enabled(true)
     , m_frameFormat(FRAME_FORMAT_UNKNOWN)
     , m_lastOriginSeqNo(0)
     , m_seqNo(0)
     , m_ssrc(0)
     , m_ssrc_generator(SsrcGenerator::GetSsrcGenerator())
+    , m_taskRunner(taskRunner)
 {
     audio_sink_ = nullptr;
     m_ssrc = m_ssrc_generator->CreateSsrc();
     m_ssrc_generator->RegisterSsrc(m_ssrc);
     m_audioTransport.reset(new WebRTCTransport<erizoExtra::AUDIO>(this, nullptr));
-    m_taskRunner.reset(new owt_base::WebRTCTaskRunner("AudioFramePacketizer"));
-    m_taskRunner->Start();
+    // m_taskRunner.reset(new owt_base::WebRTCTaskRunner("AudioFramePacketizer"));
+    // m_taskRunner->Start();
+    // m_taskRunner.reset(taskRunner);
     init();
 }
 
 AudioFramePacketizer::~AudioFramePacketizer()
 {
     close();
-    m_taskRunner->Stop();
+    // m_taskRunner->Stop();
     m_ssrc_generator->ReturnSsrc(m_ssrc);
     SsrcGenerator::ReturnSsrcGenerator();
     boost::unique_lock<boost::shared_mutex> lock(m_rtpRtcpMutex);

@@ -33,7 +33,7 @@ class AudioFramePacketizer : public FrameDestination,
     DECLARE_LOGGER();
 
 public:
-    AudioFramePacketizer();
+    AudioFramePacketizer(std::shared_ptr<WebRTCTaskRunner> taskRunner);
     ~AudioFramePacketizer();
 
     void bindTransport(erizo::MediaSink* sink);
@@ -58,7 +58,7 @@ private:
     boost::shared_mutex m_rtpRtcpMutex;
 
     boost::shared_ptr<webrtc::Transport> m_audioTransport;
-    boost::shared_ptr<WebRTCTaskRunner> m_taskRunner;
+    std::shared_ptr<WebRTCTaskRunner> m_taskRunner;
     FrameFormat m_frameFormat;
     boost::shared_mutex m_transport_mutex;
 

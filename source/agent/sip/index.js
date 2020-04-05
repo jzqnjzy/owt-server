@@ -19,6 +19,9 @@ var cluster_name = ((global.config || {}).cluster || {}).name || 'owt-cluster';
 var log = logger.getLogger('SipNode');
 var InternalConnectionFactory = require('./InternalConnectionFactory');
 
+var webrtcTaskRunnerPool = new SipGateway.WebRTCTaskRunnerPool(8);
+webrtcTaskRunnerPool.start();
+
 // resolution map
 var resolution_map = {
     'sif' : {'width' : 352, 'height' : 240},
@@ -477,7 +480,7 @@ module.exports = function (rpcC, selfRpcId, parentRpcId, clusterWorkerIP) {
 
         if (client_id && calls[client_id]) {
             calls[client_id].conn = new SipCallConnection({gateway: gateway, peerURI: info.peerURI, audio : info.audio, video : info.video,
-                red : support_red, ulpfec : support_ulpfec}, notifyMediaUpdate);
+                red : support_red, ulpfec : support_ulpfec, webrtcTaskRunnerPool: webrtcTaskRunnerPool}, notifyMediaUpdate);
             setupCall(client_id, info)
             .catch(function(err) {
                 log.error('Error during call establish:', err);
@@ -554,7 +557,7 @@ module.exports = function (rpcC, selfRpcId, parentRpcId, clusterWorkerIP) {
             // recreate a sip call connection
             calls[client_id].conn && calls[client_id].conn.close();
             calls[client_id].conn = new SipCallConnection({gateway: gateway, peerURI: calls[client_id].peerURI, audio : info.audio, video : info.video,
-                red : support_red, ulpfec : support_ulpfec}, notifyMediaUpdate);
+                red : support_red, ulpfec : support_ulpfec, webrtcTaskRunnerPool: webrtcTaskRunnerPool}, notifyMediaUpdate);
             return setupCall(client_id, info);
         })
         .then(function(result) {

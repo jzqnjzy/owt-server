@@ -12,6 +12,7 @@
 #include "AudioFramePacketizerWrapper.h"
 #include "VideoFrameConstructorWrapper.h"
 #include "VideoFramePacketizerWrapper.h"
+#include "WebRTCTaskRunnerPool.h"
 
 #include <node.h>
 
@@ -28,6 +29,7 @@ void InitAll(Handle<Object> exports) {
   SipGateway::Init(exports);
   SipCallConnection::Init(exports);
   sipua_mod_init();
+  WebRTCTaskRunnerPool::Init(exports);
 }
 
 NODE_MODULE(addon, InitAll)

@@ -145,6 +145,8 @@ module.exports = function (spec, on_status, on_mediaUpdate) {
     wrtcId = spec.connectionId,
     threadPool = spec.threadPool,
     ioThreadPool = spec.ioThreadPool,
+
+    webrtcTaskRunnerPool = spec.webrtcTaskRunnerPool,
     // preferredAudioCodecs = spec.preferred_audio_codecs,
     // preferredVideoCodecs = spec.preferred_video_codecs,
     networkInterfaces = spec.network_interfaces,
@@ -368,14 +370,14 @@ module.exports = function (spec, on_status, on_mediaUpdate) {
       wrtc.setSimulcastInfo(simulcastInfo);
     } else {
       if (audio) {
-        audioFramePacketizer = new AudioFramePacketizer();
+        audioFramePacketizer = new AudioFramePacketizer(webrtcTaskRunnerPool);
         audioFramePacketizer.bindTransport(wrtc.getMediaStream(wrtcId));
       }
       if (video) {
         const hasRed = hasCodec(sdp, 'red');
         const hasUlpfec = hasCodec(sdp, 'ulpfec');
         transportSeqNumExt = getExtId(sdp, TransportSeqNumUri);
-        videoFramePacketizer = new VideoFramePacketizer(hasRed, hasUlpfec, transportSeqNumExt);
+        videoFramePacketizer = new VideoFramePacketizer(hasRed, hasUlpfec, webrtcTaskRunnerPool, transportSeqNumExt);
         videoFramePacketizer.bindTransport(wrtc.getMediaStream(wrtcId));
       }
     }
